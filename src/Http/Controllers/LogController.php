@@ -54,7 +54,6 @@ class LogController
                 if (empty($input)) {
                     return;
                 }
-
                 $input = Arr::except($input, ['_pjax', '_token', '_method', '_previous_']);
 
                 if (empty($input)) {

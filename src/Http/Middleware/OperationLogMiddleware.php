@@ -37,7 +37,7 @@ class OperationLogMiddleware
     /**
      * @param array $input
      *
-     * @return string
+     * @return array
      */
     protected function formatInput(array $input)
     {
@@ -47,7 +47,7 @@ class OperationLogMiddleware
             }
         }
 
-        return json_encode($input, JSON_UNESCAPED_UNICODE);
+        return $input;
     }
 
     /**
