@@ -4,6 +4,7 @@ return [
     //需要排除的路由
     'except' => [
         'auth/operation-logs*', //操作日志的路由
+        'dcat-api/render*', //操作日志的路由
 
     ],
 
@@ -18,6 +19,6 @@ return [
 
     //多后台用户表与其模型命名空间的映射关系
     'users_map' => [
-        'admin_users' => 'App\Models\AdminUser',
+        'admin_users' => 'App\Models\Administrator',
     ]
 ];

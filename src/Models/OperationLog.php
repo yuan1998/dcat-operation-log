@@ -2,6 +2,7 @@
 
 namespace Weiaibaicai\OperationLog\Models;
 
+use Dcat\Admin\Admin;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,5 +59,26 @@ class OperationLog extends Model
     public static function getUsersMap(string  $table):string
     {
         return config(sprintf('operation-log.users_map.%s', $table)) ?? '';
+    }
+
+    public static function makeLog($input, $path = null)
+    {
+        $user = Admin::user();
+        $request = request();
+        $log = [
+            'user_id' => $user ? $user->id : 0,
+            'path' => $path ?: substr($request->path(), 0, 255),
+            'method' => $request->method(),
+            'ip' => $request->getClientIp(),
+            'input' => json_encode($input, JSON_UNESCAPED_UNICODE),
+            'app_type' => Admin::app()->getName(),
+            'target_type' => $user ? static::getUsersMap($user->getTable()) : null,
+        ];
+
+        try {
+            static::create($log);
+        } catch (\Exception $exception) {
+            // pass
+        }
     }
 }

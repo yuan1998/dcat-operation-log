@@ -73,6 +73,10 @@ class LogController
             $grid->disableQuickEditButton();
             $grid->disableEditButton();
             $grid->disableViewButton();
+            if(!OperationLogServiceProvider::setting('enable_grid_delete')) {
+                $grid->disableDeleteButton();
+                $grid->disableBatchDelete();
+            }
             $grid->showColumnSelector();
             $grid->setActionClass(Grid\Displayers\Actions::class);
 
@@ -85,6 +89,7 @@ class LogController
                     OperationLog::$methods));
 
                 $filter->like('path', trans('admin.uri'));
+                $filter->like('input');
                 $filter->equal('ip', 'IP');
                 $filter->between('created_at')->datetime();
             });

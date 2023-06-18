@@ -28,23 +28,7 @@ class OperationLogMiddleware
     public function handle(Request $request, \Closure $next)
     {
         if ($this->shouldLogOperation($request)) {
-            $user = Admin::user();
-
-            $log = [
-                'user_id'     => $user ? $user->id : 0,
-                'path'        => substr($request->path(), 0, 255),
-                'method'      => $request->method(),
-                'ip'          => $request->getClientIp(),
-                'input'       => $this->formatInput($request->input()),
-                'app_type'    => Admin::app()->getName(),
-                'target_type' => OperationLogModel::getUsersMap($user->getTable()),
-            ];
-
-            try {
-                OperationLogModel::create($log);
-            } catch (\Exception $exception) {
-                // pass
-            }
+            OperationLogModel::makeLog($this->formatInput($request->input()));
         }
 
         return $next($request);

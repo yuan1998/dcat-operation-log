@@ -23,7 +23,7 @@ class AddAppTypeToAdminOperationLogTable extends Migration
 
     public function down()
     {
-        if (! Schema::hasTable('admin_operation_log')) {
+        if (Schema::hasTable('admin_operation_log')) {
             Schema::dropColumns('admin_operation_log', 'app_type');
             Schema::dropColumns('admin_operation_log', 'target_type');
         }
