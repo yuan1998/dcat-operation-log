@@ -90,7 +90,14 @@ class LogController
                 $filter->like('path', trans('admin.uri'));
                 $filter->like('input');
                 $filter->equal('ip', 'IP');
-                $filter->between('created_at')->datetime();
+                $filter->whereBetween('created_at', function ($query) {
+                    $start = $this->input['start'] ?? null;
+                    $end = $this->input['end'] ?? null;
+                    if ($start)
+                        $query->where('created_at', ">=", "$start 00:00:00");
+                    if ($end)
+                        $query->where('created_at', "<=", "$end 23:59:59");
+                })->date();
             });
         });
     }

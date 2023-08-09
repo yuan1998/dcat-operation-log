@@ -2,9 +2,11 @@
 
 namespace Weiaibaicai\OperationLog\Models;
 
+use App\Models\Administrator;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class OperationLog extends Model
 {
@@ -61,12 +63,19 @@ class OperationLog extends Model
         return config(sprintf('operation-log.users_map.%s', $table)) ?? '';
     }
 
+    public static function logUser() {
+        return Administrator::firstOrCreate([
+            'username' => 'OperationLog',
+            'name' => '日志用户(勿动)'
+        ]);
+    }
+
     public static function makeLog($input, $path = null)
     {
-        $user = Admin::user();
+        $user = Admin::user() ?: self::logUser();
         $request = request();
         $log = [
-            'user_id' => $user ? $user->id : 0,
+            'user_id' => $user?->id,
             'path' => $path ?: substr($request->path(), 0, 255),
             'method' => $request->method(),
             'ip' => $request->getClientIp(),
@@ -79,6 +88,7 @@ class OperationLog extends Model
             static::create($log);
         } catch (\Exception $exception) {
             // pass
+            Log::info('添加日志报错' , [$exception->getMessage()]);
         }
     }
 }
